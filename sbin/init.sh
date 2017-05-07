@@ -9,7 +9,7 @@ busybox mount -t sysfs none /sys
 busybox mount -t tmpfs none /dev
 
 # Something (what?) needs a few cycles here
-busybox sleep 10
+busybox sleep 2
 
 # Populate /dev
 busybox mdev -s
@@ -22,10 +22,13 @@ busybox sleep 1
 
 #busybox sleep 10
 # Mount the root filesystem, second partition on micro SDcard
-busybox mount -t ext4 -o noatime,nodiratime,errors=panic /dev/sda1 /mnt
+busybox mount -t ext4 -o noatime,nodiratime,errors=panic /dev/mmcblk0p7 /mnt
 
-busybox echo "heheheh" > /mnt/testi
-busybox dmesg > /mnt/logDmesg.txt
+busybox mkdir /rootfs
+
+busybox mount /mnt/Arch /rootfs
+
+busybox echo "heheheh" > /rootfs/testi
 
 busybox sync
 
@@ -36,12 +39,10 @@ busybox sync
 #umount /sys
 #umount /dev
 
-busybox dmesg > /mnt/logD
 busybox sync
 
-
 # Transfer root to SDcard
-exec /sbin/busybox switch_root /mnt /sbin/init
+exec /sbin/busybox switch_root /rootfs /sbin/init
 
 busybox dmesg > /mnt/logDmes
 busybox sync
